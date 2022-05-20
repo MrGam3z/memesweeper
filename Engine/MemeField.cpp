@@ -63,11 +63,6 @@ MemeField::MemeField(int nMemes) {
 
 		TileAt(spawnPos).SpawnMeme();
 	}
-	// reveal test TODO: DELETE SOON
-	for (int i = 0; i < 120; i++) {
-		const Vei2 gridPos = { xDist(rng),yDist(rng) };
-		if (!TileAt(gridPos).IsRevealed()) { TileAt(gridPos).Reveal(); }
-	}
 
 	for (Vei2 gridPos = { 0, 0 }; gridPos.y < height; gridPos.y++) {
 		for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
