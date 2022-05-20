@@ -24,22 +24,19 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
-{
-}
+	gfx( wnd ),
+	field(20) {}
 
-void Game::Go()
-{
+void Game::Go() {
 	gfx.BeginFrame();	
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
 }
 
-void Game::UpdateModel()
-{
+void Game::UpdateModel() {
 }
 
-void Game::ComposeFrame()
-{
+void Game::ComposeFrame() {
+	field.Draw(gfx);
 }
