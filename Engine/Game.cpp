@@ -20,12 +20,13 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "SpriteCodex.h"
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(gfx.GetRect().GetCenter(), 20) {}
+	field(gfx.GetRect().GetCenter(), 4) {}
 
 void Game::Go() {
 	gfx.BeginFrame();	
@@ -35,19 +36,22 @@ void Game::Go() {
 }
 
 void Game::UpdateModel() {
-	while (!wnd.mouse.IsEmpty()) {
-		const auto e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress) {
-			const Vei2 mousePos = e.GetPos();
-			if (field.GetRect().Contains(mousePos)) { field.OnRevealClick(mousePos); }
-		}
-		else if (e.GetType() == Mouse::Event::Type::RPress) {
-			const Vei2 mousePos = e.GetPos();
-			if (field.GetRect().Contains(mousePos)) { field.OnFlagClick(mousePos); }
+	if (!field.GameIsWon()) {
+		while (!wnd.mouse.IsEmpty()) {
+			const auto e = wnd.mouse.Read();
+			if (e.GetType() == Mouse::Event::Type::LPress) {
+				const Vei2 mousePos = e.GetPos();
+				if (field.GetRect().Contains(mousePos)) { field.OnRevealClick(mousePos); }
+			}
+			else if (e.GetType() == Mouse::Event::Type::RPress) {
+				const Vei2 mousePos = e.GetPos();
+				if (field.GetRect().Contains(mousePos)) { field.OnFlagClick(mousePos); }
+			}
 		}
 	}
 }
 
 void Game::ComposeFrame() {
 	field.Draw(gfx);
+	if (field.GameIsWon()) { SpriteCodex::DrawWin(gfx.GetRect().GetCenter(), gfx); }
 }
