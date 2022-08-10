@@ -36,9 +36,9 @@ void Game::Go() {
 }
 
 void Game::UpdateModel() {
-	if (!field.GameIsWon()) {
-		while (!wnd.mouse.IsEmpty()) {
-			const auto e = wnd.mouse.Read();
+	while (!wnd.mouse.IsEmpty()) {
+		const auto e = wnd.mouse.Read();
+		if (field.GetState() == MemeField::State::Memeing) {
 			if (e.GetType() == Mouse::Event::Type::LPress) {
 				const Vei2 mousePos = e.GetPos();
 				if (field.GetRect().Contains(mousePos)) { field.OnRevealClick(mousePos); }
@@ -53,5 +53,7 @@ void Game::UpdateModel() {
 
 void Game::ComposeFrame() {
 	field.Draw(gfx);
-	if (field.GameIsWon()) { SpriteCodex::DrawWin(gfx.GetRect().GetCenter(), gfx); }
+	if (field.GetState() == MemeField::State::Winrar) { 
+		SpriteCodex::DrawWin(gfx.GetRect().GetCenter(), gfx);
+	}
 }

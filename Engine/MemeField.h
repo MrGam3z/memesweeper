@@ -4,6 +4,12 @@
 #include "Sound.h"
 
 class MemeField {
+public:
+	enum class State {
+		Fucked,
+		Winrar,
+		Memeing
+	};
 private:
 	class Tile {
 	public:
@@ -15,7 +21,7 @@ private:
 	public:
 		void SpawnMeme();
 		bool HasMeme() const;
-		void Draw(const Vei2& screenPos, bool fucked, Graphics& gfx) const;
+		void Draw(const Vei2& screenPos, MemeField::State fieldState, Graphics& gfx) const;
 		void Reveal();
 		bool IsRevealed() const;
 		void ToggleFlag();
@@ -32,13 +38,13 @@ public:
 	RectI GetRect() const;
 	void OnRevealClick(const Vei2& screenPos);
 	void OnFlagClick(const Vei2& screenPos);
-	bool GameIsWon() const;
-	bool GameIsLost() const;
+	State GetState() const;
 private:
 	MemeField::Tile& TileAt(const Vei2& gridPos);
 	const Tile& TileAt(const Vei2& gridPos) const;
 	Vei2 ScreenToGrid(const Vei2& screenPos);
 	int CountNeighborMemes(const Vei2& gridPos);
+	bool MemeField::GameIsWon() const;
 private:
 	static constexpr int width = 4;
 	static constexpr int height = 3;
@@ -46,6 +52,6 @@ private:
 	static constexpr Color borderColor = Colors::Blue;
 	Sound sndLose = Sound(L"spayed.wav");
 	Vei2 topLeft;
-	bool isFucked = false;
+	State state = State::Memeing;
 	Tile field[width * height];
 };
