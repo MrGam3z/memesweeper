@@ -26,7 +26,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(gfx.GetRect().GetCenter(), 4) {}
+	field(gfx.GetRect().GetCenter(), 20) {}
 
 void Game::Go() {
 	gfx.BeginFrame();	

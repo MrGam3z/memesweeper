@@ -26,6 +26,7 @@ private:
 		bool IsRevealed() const;
 		void ToggleFlag();
 		bool IsFlagged() const;
+		bool HasNoNeighborMemes() const;
 		void SetNeighborMemeCount(int memeCount);
 	private:
 		State state = State::Hidden;
@@ -40,14 +41,15 @@ public:
 	void OnFlagClick(const Vei2& screenPos);
 	State GetState() const;
 private:
+	void RevealTile(const Vei2& gridPos);
 	MemeField::Tile& TileAt(const Vei2& gridPos);
 	const Tile& TileAt(const Vei2& gridPos) const;
 	Vei2 ScreenToGrid(const Vei2& screenPos);
 	int CountNeighborMemes(const Vei2& gridPos);
 	bool MemeField::GameIsWon() const;
 private:
-	static constexpr int width = 4;
-	static constexpr int height = 3;
+	static constexpr int width = 15;
+	static constexpr int height = 10;
 	static constexpr int borderThickness = 10;
 	static constexpr Color borderColor = Colors::Blue;
 	Sound sndLose = Sound(L"spayed.wav");
