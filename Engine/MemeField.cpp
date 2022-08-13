@@ -155,6 +155,11 @@ MemeField::MemeField(const Vei2& center, int width, int height, int nMemes)
 	}
 }
 
+MemeField::~MemeField() {
+	delete[] field;
+	field = nullptr;
+}
+
 void MemeField::Draw( Graphics& gfx ) const
 {
 	gfx.DrawRect( GetRect().GetExpanded( borderThickness ),borderColor );
@@ -208,11 +213,6 @@ void MemeField::OnFlagClick( const Vei2 & screenPos )
 MemeField::State MemeField::GetState() const
 {
 	return state;
-}
-
-void MemeField::FreeResources() {
-	delete[] field;
-	field = nullptr;
 }
 
 void MemeField::RevealTile( const Vei2& gridPos )

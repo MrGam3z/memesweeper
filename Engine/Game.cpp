@@ -29,6 +29,10 @@ Game::Game(MainWindow& wnd)
 	gfx(wnd),
 	menu({ gfx.GetRect().GetCenter().x,200 }) {}
 
+Game::~Game() {
+	DestroyField();
+}
+
 void Game::Go() {
 	gfx.BeginFrame();	
 	UpdateModel();
@@ -86,7 +90,6 @@ void Game::CreateField(int width, int height, int nMemes) {
 }
 
 void Game::DestroyField() {
-	pField->FreeResources();
 	delete pField;
 	pField = nullptr;
 }
