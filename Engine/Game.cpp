@@ -18,80 +18,85 @@
  *	You should have received a copy of the GNU General Public License					  *
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
+#include <assert.h>
 #include "MainWindow.h"
 #include "Game.h"
 #include "SpriteCodex.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd ),
-	menu( { gfx.GetRect().GetCenter().x,200 } ),
-	field( gfx.GetRect().GetCenter(),4 )
-{
-}
+	wnd(wnd),
+	gfx(wnd),
+	menu({ gfx.GetRect().GetCenter().x,200 }) {}
 
-void Game::Go()
-{
+void Game::Go() {
 	gfx.BeginFrame();	
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
 }
 
-void Game::UpdateModel()
-{
-	while( !wnd.mouse.IsEmpty() )
-	{
+void Game::UpdateModel() {
+	while (!wnd.mouse.IsEmpty()) {
 		const auto e = wnd.mouse.Read();
-		if( state == State::Memesweeper )
-		{
-			if( field.GetState() == MemeField::State::Memeing )
-			{
-				if( e.GetType() == Mouse::Event::Type::LPress )
-				{
+
+		if (state == State::Memesweeper) {
+			if (pField->GetState() == MemeField::State::Memeing) {
+				if (e.GetType() == Mouse::Event::Type::LPress) {
 					const Vei2 mousePos = e.GetPos();
-					if( field.GetRect().Contains( mousePos ) )
-					{
-						field.OnRevealClick( mousePos );
+
+					if (pField->GetRect().Contains(mousePos)) {
+						pField->OnRevealClick(mousePos);
+					}
+				} else if (e.GetType() == Mouse::Event::Type::RPress) {
+					const Vei2 mousePos = e.GetPos();
+					if (pField->GetRect().Contains(mousePos)) {
+						pField->OnFlagClick(mousePos);
 					}
 				}
-				else if( e.GetType() == Mouse::Event::Type::RPress )
-				{
-					const Vei2 mousePos = e.GetPos();
-					if( field.GetRect().Contains( mousePos ) )
-					{
-						field.OnFlagClick( mousePos );
-					}
+			} else {
+				if (e.GetType() == Mouse::Event::Type::LPress) {
+					DestroyField();
+					state = State::SelectionMenu;
 				}
 			}
-		}
-		else
-		{
-			const SelectionMenu::Size s = menu.ProcessMouse( e );
-			switch( s )
-			{
+		} else {
+			const SelectionMenu::Size s = menu.ProcessMouse(e);
+			switch (s) {
 			case SelectionMenu::Size::Small:
-			case SelectionMenu::Size::Medium:
-			case SelectionMenu::Size::Large:
+				CreateField(8, 4, 5);
 				state = State::Memesweeper;
+				break;
+			case SelectionMenu::Size::Medium:
+				CreateField(14, 7, 15);
+				state = State::Memesweeper;
+				break;
+			case SelectionMenu::Size::Large:
+				CreateField(24, 16, 45);
+				state = State::Memesweeper;
+				break;
 			}
 		}
 	}
 }
 
-void Game::ComposeFrame()
-{
-	if( state == State::Memesweeper )
-	{
-		field.Draw( gfx );
-		if( field.GetState() == MemeField::State::Winrar )
-		{
-			SpriteCodex::DrawWin( gfx.GetRect().GetCenter(),gfx );
+void Game::CreateField(int width, int height, int nMemes) {
+	assert(pField == nullptr);
+	pField = new MemeField(gfx.GetRect().GetCenter(), width, height, nMemes);
+}
+
+void Game::DestroyField() {
+	pField->FreeResources();
+	delete pField;
+	pField = nullptr;
+}
+
+void Game::ComposeFrame() {
+	if (state == State::Memesweeper) {
+		pField->Draw(gfx);
+
+		if (pField->GetState() == MemeField::State::Winrar) {
+			SpriteCodex::DrawWin(gfx.GetRect().GetCenter(), gfx);
 		}
-	}
-	else
-	{
-		menu.Draw( gfx );
-	}
+	} else { menu.Draw(gfx); }
 }
